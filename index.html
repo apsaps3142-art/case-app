@@ -2,33 +2,337 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Касса</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Касса 24/7</title>
+  <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body { font-family: sans-serif; background: #18191d; color: #fff; padding: 20px; text-align: center; }
-    .card { background: #23252b; border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-    input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #3a3d46; background: #121316; color: #fff; font-size: 16px; }
-    button { background: #0088cc; color: #fff; border: none; border-radius: 8px; padding: 14px; width: 95%; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-title {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      color: var(--text-main);
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+
+    button.btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 6px;
+    }
+
+    button.btn-primary:active {
+      background: var(--accent-hover);
+      transform: scale(0.99);
+    }
+
+    .history-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .clear-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .tx-desc {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .tx-time {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .tx-amount {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--success);
+      text-align: right;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      padding: 20px 0;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2 id="title">Касса 24/7</h2>
-    <input type="number" id="sum" placeholder="Сумма (сомони)">
-    <input type="text" id="desc" placeholder="Описание товара / заказа">
-    <button id="btn">Зафиксировать запись</button>
+  <div class="container">
+    <div class="card">
+      <h1>Касса 24/7</h1>
+
+      <!-- Сводка -->
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-title">Итого за сегодня</div>
+          <div class="stat-value" id="totalToday">0 с.</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-title">Чеков</div>
+          <div class="stat-value" id="countToday" style="color: var(--text-main);">0</div>
+        </div>
+      </div>
+
+      <!-- Форма ввода -->
+      <form id="kassaForm">
+        <div class="form-group">
+          <label for="amount">Сумма (сомони)</label>
+          <input type="number" id="amount" placeholder="0.00" step="any" required inputmode="decimal">
+        </div>
+
+        <div class="form-group">
+          <label for="description">Описание товара / заказа</label>
+          <input type="text" id="description" placeholder="Например: Чехол силиконовый" required>
+        </div>
+
+        <button type="submit" class="btn-primary">Зафиксировать запись</button>
+      </form>
+    </div>
+
+    <!-- История операций -->
+    <div class="card">
+      <div class="history-title">
+        <span>История операций</span>
+        <button type="button" class="clear-btn" id="clearBtn">Очистить</button>
+      </div>
+      <div class="transaction-list" id="txList">
+        <div class="empty-state">Пока нет записей</div>
+      </div>
+    </div>
   </div>
+
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-    document.getElementById('btn').onclick = function() {
-      const sum = document.getElementById('sum').value;
-      const desc = document.getElementById('desc').value;
-      if (!sum) { tg.showAlert('Введите сумму!'); return; }
-      tg.sendData(JSON.stringify({ sum: sum, desc: desc }));
-    };
+    // Инициализация Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    // Вставьте сюда ссылку Web App из Google Таблицы (Apps Script), когда создадите её
+    const GOOGLE_SCRIPT_URL = "";
+
+    const form = document.getElementById('kassaForm');
+    const amountInput = document.getElementById('amount');
+    const descInput = document.getElementById('description');
+    const totalTodayEl = document.getElementById('totalToday');
+    const countTodayEl = document.getElementById('countToday');
+    const txListEl = document.getElementById('txList');
+    const clearBtn = document.getElementById('clearBtn');
+
+    // Загрузка локальных данных
+    let transactions = JSON.parse(localStorage.getItem('kassa_records') || '[]');
+
+    function render() {
+      txListEl.innerHTML = '';
+      let total = 0;
+
+      if (transactions.length === 0) {
+        txListEl.innerHTML = '<div class="empty-state">Пока нет записей</div>';
+      } else {
+        transactions.forEach(t => {
+          total += Number(t.amount);
+          const item = document.createElement('div');
+          item.className = 'transaction-item';
+          item.innerHTML = `
+            <div>
+              <div class="tx-desc">${t.desc}</div>
+              <div class="tx-time">${t.date}</div>
+            </div>
+            <div class="tx-amount">+${Number(t.amount).toFixed(2)} с.</div>
+          `;
+          txListEl.appendChild(item);
+        });
+      }
+
+      totalTodayEl.textContent = total.toFixed(2) + ' с.';
+      countTodayEl.textContent = transactions.length;
+    }
+
+    // Сохранение записи
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const amount = parseFloat(amountInput.value);
+      const desc = descInput.value.trim();
+      const now = new Date();
+      const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (isNaN(amount) || amount <= 0 || !desc) return;
+
+      const record = { amount, desc, date: timeStr };
+
+      // 1. Сохранение локально
+      transactions.unshift(record);
+      localStorage.setItem('kassa_records', JSON.stringify(transactions));
+      render();
+
+      // 2. Отправка в Google Таблицу (если настроен URL)
+      if (GOOGLE_SCRIPT_URL) {
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record)
+        }).catch(err => console.error("Ошибка Google Таблицы:", err));
+      }
+
+      // 3. Отправка данных боту Telegram (если открыто внутри бота)
+      if (tg && tg.sendData) {
+        tg.sendData(JSON.stringify(record));
+      }
+
+      // Очистка полей ввода
+      amountInput.value = '';
+      descInput.value = '';
+    });
+
+    clearBtn.addEventListener('click', () => {
+      if (confirm('Очистить всю историю кассы?')) {
+        transactions = [];
+        localStorage.removeItem('kassa_records');
+        render();
+      }
+    });
+
+    render();
   </script>
 </body>
 </html>
