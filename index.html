@@ -3,33 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Касса и Аналитика</title>
+  <title>Касса Магазина</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Подключение Chart.js для графиков -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg: var(--tg-theme-bg-color, #0f172a);
-      --card-bg: var(--tg-theme-secondary-bg-color, #1e293b);
-      --text: var(--tg-theme-text-color, #f8fafc);
-      --hint: var(--tg-theme-hint-color, #94a3b8);
-      --btn: var(--tg-theme-button-color, #38bdf8);
-      --btn-text: var(--tg-theme-button-text-color, #0f172a);
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --hint: #94a3b8;
+      --btn: #38bdf8;
+      --btn-text: #0f172a;
       --success: #22c55e;
-      --danger: #ef4444;
       --border: rgba(255, 255, 255, 0.08);
     }
-
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
       margin: 0;
-      padding: 12px 12px 80px 12px;
+      padding: 12px 12px 85px 12px;
       background: var(--bg);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-
-    /* Навигационное меню (вкладки) */
     .nav-bar {
       position: fixed;
       bottom: 0;
@@ -38,7 +33,7 @@
       background: var(--card-bg);
       display: flex;
       justify-content: space-around;
-      padding: 10px 0;
+      padding: 12px 0;
       border-top: 1px solid var(--border);
       z-index: 100;
     }
@@ -46,7 +41,7 @@
       background: none;
       border: none;
       color: var(--hint);
-      font-size: 12px;
+      font-size: 13px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -56,19 +51,16 @@
     }
     .nav-btn.active {
       color: var(--btn);
-      font-weight: 600;
+      font-weight: 700;
     }
-    .nav-btn svg { width: 22px; height: 22px; fill: currentColor; }
-
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Карточки метрик */
     .grid-stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .stat-card {
       background: var(--card-bg);
@@ -76,10 +68,9 @@
       border-radius: 12px;
       border: 1px solid var(--border);
     }
-    .stat-card .title { font-size: 12px; color: var(--hint); }
+    .stat-card .title { font-size: 11px; color: var(--hint); text-transform: uppercase; }
     .stat-card .val { font-size: 18px; font-weight: 700; margin-top: 4px; color: var(--btn); }
 
-    /* Селектор периодов */
     .period-chips {
       display: flex;
       gap: 6px;
@@ -100,26 +91,21 @@
     .chip.active {
       background: var(--btn);
       color: var(--btn-text);
-      font-weight: 600;
+      font-weight: 700;
     }
-
     .date-range-box {
       display: flex;
       gap: 8px;
       margin-bottom: 14px;
-      background: var(--card-bg);
-      padding: 8px;
-      border-radius: 10px;
     }
     .date-range-box input {
       flex: 1;
-      padding: 6px;
-      font-size: 13px;
+      padding: 8px;
+      font-size: 12px;
     }
 
-    /* Формы */
     .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 12px; color: var(--hint); margin-bottom: 4px; }
+    label { display: block; font-size: 12px; color: var(--hint); margin-bottom: 5px; }
     input, select {
       width: 100%;
       padding: 12px;
@@ -139,23 +125,21 @@
       border-radius: 10px;
       background: var(--btn);
       color: var(--btn-text);
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 6px;
     }
     .btn-submit:disabled { opacity: 0.5; }
 
-    /* Графики */
     .chart-box {
       background: var(--card-bg);
-      padding: 12px;
+      padding: 14px;
       border-radius: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       border: 1px solid var(--border);
     }
 
-    /* Списки */
     .item-list { display: flex; flex-direction: column; gap: 8px; }
     .item-card {
       background: var(--card-bg);
@@ -173,23 +157,22 @@
     .status-msg {
       text-align: center;
       font-size: 12px;
-      margin-top: 6px;
-      min-height: 18px;
-      color: var(--hint);
+      margin-top: 8px;
+      min-height: 16px;
+      color: var(--btn);
     }
-
-    .badge-role {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(56, 189, 248, 0.2);
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15);
       color: var(--btn);
     }
   </style>
 </head>
 <body>
 
-  <!-- ================= ВКЛАДКА 1: КАССА ================= -->
+  <!-- ВКЛАДКА КАССЫ -->
   <div id="tab-checkout" class="tab-content active">
     <div class="grid-stats">
       <div class="stat-card">
@@ -204,7 +187,7 @@
 
     <div class="form-group">
       <label>Товар / Описание</label>
-      <input type="text" id="desc" placeholder="Чехол Galaxy S23, кабель..." autocomplete="off">
+      <input type="text" id="desc" placeholder="Например: Чехол матовый S23">
     </div>
 
     <div class="form-group">
@@ -215,13 +198,12 @@
     <button class="btn-submit" id="saveBtn" onclick="submitSale()">Внести чек в кассу</button>
     <div class="status-msg" id="statusMsg"></div>
 
-    <h4 style="margin: 20px 0 8px; font-size: 14px; color: var(--hint);">Последние записи</h4>
+    <h4 style="margin: 20px 0 8px; font-size: 13px; color: var(--hint); text-transform: uppercase;">Последние чеки</h4>
     <div class="item-list" id="recentList"></div>
   </div>
 
-  <!-- ================= ВКЛАДКА 2: АНАЛИТИКА ================= -->
+  <!-- ВКЛАДКА АНАЛИТИКИ -->
   <div id="tab-stats" class="tab-content">
-    <!-- Переключатель периодов -->
     <div class="period-chips">
       <div class="chip active" onclick="setPeriod('today', this)">Сегодня</div>
       <div class="chip" onclick="setPeriod('week', this)">7 дней</div>
@@ -230,24 +212,22 @@
       <div class="chip" onclick="setPeriod('custom', this)">Свой период</div>
     </div>
 
-    <!-- Выбор произвольного диапазона дат -->
-    <div id="customDateRange" class="date-range-box" style="display: none;">
+    <div id="customRangeBox" class="date-range-box" style="display: none;">
       <input type="date" id="dateFrom" onchange="calculateStats()">
       <input type="date" id="dateTo" onchange="calculateStats()">
     </div>
 
-    <!-- Сводка показателей -->
     <div class="grid-stats">
       <div class="stat-card">
         <div class="title">Выручка за период</div>
         <div class="val" id="periodTotal">0 TJS</div>
       </div>
       <div class="stat-card">
-        <div class="title">Чеков</div>
+        <div class="title">Чеков за период</div>
         <div class="val" id="periodCount">0</div>
       </div>
       <div class="stat-card">
-        <div class="title">Минимальный чек</div>
+        <div class="title">Мин. чек</div>
         <div class="val" id="periodMin">0 TJS</div>
       </div>
       <div class="stat-card">
@@ -256,87 +236,74 @@
       </div>
     </div>
 
-    <!-- Диаграмма динамики выручки -->
     <div class="chart-box">
       <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">Динамика выручки</div>
-      <canvas id="salesChart" height="200"></canvas>
+      <canvas id="salesChart" height="180"></canvas>
     </div>
 
-    <!-- Диаграмма распределения по продавцам -->
     <div class="chart-box">
-      <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">Вклад продавцов</div>
-      <canvas id="sellersChart" height="180"></canvas>
+      <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">Выручка по продавцам</div>
+      <canvas id="sellersChart" height="160"></canvas>
     </div>
   </div>
 
-  <!-- ================= ВКЛАДКА 3: ДОСТУП (ДЛЯ ВЛАДЕЛЬЦА) ================= -->
+  <!-- ВКЛАДКА ДОСТУПА -->
   <div id="tab-access" class="tab-content">
-    <div id="adminPanel" style="display: none;">
-      <h3 style="margin-top:0;">Доступ к кассе</h3>
-      <p style="font-size: 12px; color: var(--hint);">Добавьте Telegram ID или никнейм сотрудника, чтобы открыть ему доступ к кассе.</p>
+    <div id="adminPanel">
+      <h3 style="margin-top:0; font-size: 16px;">Управление доступом</h3>
+      <p style="font-size: 12px; color: var(--hint); margin-bottom: 14px;">Добавляйте Telegram ID сотрудников, чтобы разрешить им пользоваться кассой.</p>
 
       <div class="form-group">
-        <label>Telegram ID сотрудника (число)</label>
-        <input type="text" id="newUserId" placeholder="Например: 987654321">
+        <label>Telegram ID сотрудника (из @userinfobot)</label>
+        <input type="text" id="targetId" placeholder="Например: 123456789">
       </div>
 
       <div class="form-group">
-        <label>Имя или @username</label>
-        <input type="text" id="newUserName" placeholder="Имя продавца">
+        <label>Имя или Никнейм</label>
+        <input type="text" id="targetName" placeholder="Имя сотрудника">
       </div>
 
       <div class="form-group">
-        <label>Роль</label>
-        <select id="newUserRole">
-          <option value="seller">Продавец (только ввод)</option>
+        <label>Роль доступа</label>
+        <select id="targetRole">
+          <option value="seller">Продавец (только ввод продаж)</option>
           <option value="admin">Администратор (полный доступ)</option>
         </select>
       </div>
 
-      <button class="btn-submit" onclick="addUser()">Выдать разрешение</button>
+      <button class="btn-submit" onclick="addUser()">Выдать доступ</button>
       <div class="status-msg" id="userStatusMsg"></div>
 
-      <h4 style="margin: 20px 0 8px; font-size: 14px; color: var(--hint);">Список сотрудников с доступом</h4>
+      <h4 style="margin: 20px 0 8px; font-size: 13px; color: var(--hint); text-transform: uppercase;">Сотрудники с доступом</h4>
       <div class="item-list" id="usersList"></div>
-    </div>
-
-    <div id="noAdminMsg" style="display: none; text-align: center; padding: 40px 10px; color: var(--hint);">
-      Раздел доступен только владельцу кассы.
     </div>
   </div>
 
-  <!-- Нижняя панель навигации -->
+  <!-- МЕНЮ ВНИЗУ -->
   <div class="nav-bar">
-    <button class="nav-btn active" onclick="switchTab('tab-checkout', this)">
-      <svg viewBox="0 0 24 24"><path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"/></svg>
-      Касса
-    </button>
-    <button class="nav-btn" onclick="switchTab('tab-stats', this)">
-      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-      Аналитика
-    </button>
-    <button class="nav-btn" onclick="switchTab('tab-access', this)">
-      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-      Доступ
-    </button>
+    <button class="nav-btn active" onclick="switchTab('tab-checkout', this)">💰 Касса</button>
+    <button class="nav-btn" onclick="switchTab('tab-stats', this)">📊 Аналитика</button>
+    <button class="nav-btn" onclick="switchTab('tab-access', this)">👥 Доступ</button>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXuAFKBAxP0FZPz3vunDzqtKHL86Agd-bJ_NRwqxi5pwBRpYJVC5uTu6CzgiZ27BgS/exec";
+    // ВАША СВЕЖАЯ ССЫЛКА НА GOOGLE APPS SCRIPT
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8pGwR94vtUP-1NLScwfsOWyApcZgdKXapcm2G3xcZDzx9uppMi9c8DL6dzaC4iLIe/exec";
+
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.expand();
       tg.ready();
     }
 
-    const currentUserId = tg?.initDataUnsafe?.user?.id || 123456789;
-    const currentUserName = tg?.initDataUnsafe?.user?.first_name || "Владелец";
+    // Если открыто вне Telegram, подставится ваш ID администратора
+    const currentUserId = tg?.initDataUnsafe?.user?.id || 1161147444;
+    const currentUserName = tg?.initDataUnsafe?.user?.first_name || "Сулаймон";
 
-    let allSales = [];
-    let currentRole = "seller";
+    let salesData = [];
     let activePeriod = "today";
-    let salesChartInstance = null;
-    let sellersChartInstance = null;
+    let chartSales = null;
+    let chartSellers = null;
 
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -344,9 +311,8 @@
       document.getElementById(tabId).classList.add('active');
       btn.classList.add('active');
 
-      if (tabId === 'tab-stats') {
-        calculateStats();
-      }
+      if (tabId === 'tab-stats') calculateStats();
+      if (tabId === 'tab-access') loadUsers();
     }
 
     // Загрузка данных из Google Таблицы
@@ -354,29 +320,14 @@
       try {
         const res = await fetch(`${SCRIPT_URL}?action=getData&userId=${currentUserId}`);
         const data = await res.json();
-        
         if (data.sales) {
-          allSales = data.sales;
-          currentRole = data.role || "seller";
-          localStorage.setItem('cached_sales', JSON.stringify(allSales));
+          salesData = data.sales;
+          localStorage.setItem('cached_sales', JSON.stringify(salesData));
           renderRecent();
-          calculateStats();
-          checkRoleUI();
         }
-      } catch (e) {
-        allSales = JSON.parse(localStorage.getItem('cached_sales') || '[]');
+      } catch (err) {
+        salesData = JSON.parse(localStorage.getItem('cached_sales') || '[]');
         renderRecent();
-      }
-    }
-
-    function checkRoleUI() {
-      if (currentRole === "admin") {
-        document.getElementById('adminPanel').style.display = 'block';
-        document.getElementById('noAdminMsg').style.display = 'none';
-        loadUsers();
-      } else {
-        document.getElementById('adminPanel').style.display = 'none';
-        document.getElementById('noAdminMsg').style.display = 'block';
       }
     }
 
@@ -388,7 +339,7 @@
       const list = document.getElementById('recentList');
       list.innerHTML = '';
 
-      allSales.slice(-15).reverse().forEach(s => {
+      salesData.slice(-15).reverse().forEach(s => {
         const item = document.createElement('div');
         item.className = 'item-card';
         item.innerHTML = `
@@ -410,17 +361,18 @@
       document.getElementById('todayCount').innerText = todayCount;
     }
 
+    // Внесение продажи через Mini App
     async function submitSale() {
       const descInput = document.getElementById('desc');
       const amountInput = document.getElementById('amount');
       const saveBtn = document.getElementById('saveBtn');
       const statusMsg = document.getElementById('statusMsg');
 
-      const desc = descInput.value.trim() || 'Товар без названия';
+      const desc = descInput.value.trim() || 'Товар';
       const amount = parseFloat(amountInput.value);
 
       if (!amount || amount <= 0) {
-        alert('Введите корректную сумму');
+        alert('Введите сумму');
         return;
       }
 
@@ -438,45 +390,44 @@
         seller: currentUserName
       };
 
-      allSales.push(payload);
+      salesData.push(payload);
       renderRecent();
       descInput.value = '';
       amountInput.value = '';
 
       saveBtn.disabled = true;
-      statusMsg.innerText = 'Синхронизация...';
+      statusMsg.innerText = 'Синхронизация с таблицей...';
 
       try {
         await fetch(SCRIPT_URL, {
           method: 'POST',
+          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        statusMsg.innerText = '✓ Записано в Google Таблицу';
-        setTimeout(() => statusMsg.innerText = '', 2500);
-      } catch (err) {
+        statusMsg.innerText = '✓ Чек внесен в Google Таблицу!';
+        setTimeout(() => { statusMsg.innerText = ''; }, 3000);
+      } catch (e) {
         statusMsg.innerText = 'Сохранено локально';
       } finally {
         saveBtn.disabled = false;
       }
     }
 
-    // Выбор периода аналитики
     function setPeriod(type, chip) {
       document.querySelectorAll('.period-chips .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       activePeriod = type;
 
-      const rangeBox = document.getElementById('customDateRange');
+      const customBox = document.getElementById('customRangeBox');
       if (type === 'custom') {
-        rangeBox.style.display = 'flex';
+        customBox.style.display = 'flex';
       } else {
-        rangeBox.style.display = 'none';
+        customBox.style.display = 'none';
         calculateStats();
       }
     }
 
-    // Фильтрация и расчёт графиков
     function calculateStats() {
       const now = new Date();
       const todayStr = now.toISOString().split('T')[0];
@@ -484,32 +435,27 @@
       let filtered = [];
 
       if (activePeriod === 'today') {
-        filtered = allSales.filter(s => s.date === todayStr);
+        filtered = salesData.filter(s => s.date === todayStr);
       } else if (activePeriod === 'week') {
-        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-        filtered = allSales.filter(s => s.date >= weekAgo);
+        const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString().split('T')[0];
+        filtered = salesData.filter(s => s.date >= weekAgo);
       } else if (activePeriod === 'month') {
-        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-        filtered = allSales.filter(s => s.date >= monthAgo);
+        const monthAgo = new Date(now.getTime() - 30 * 86400000).toISOString().split('T')[0];
+        filtered = salesData.filter(s => s.date >= monthAgo);
       } else if (activePeriod === 'year') {
-        const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-        filtered = allSales.filter(s => s.date >= yearAgo);
+        const yearAgo = new Date(now.getTime() - 365 * 86400000).toISOString().split('T')[0];
+        filtered = salesData.filter(s => s.date >= yearAgo);
       } else if (activePeriod === 'custom') {
         const from = document.getElementById('dateFrom').value;
         const to = document.getElementById('dateTo').value;
-        if (from && to) {
-          filtered = allSales.filter(s => s.date >= from && s.date <= to);
-        } else {
-          filtered = allSales;
-        }
+        filtered = (from && to) ? salesData.filter(s => s.date >= from && s.date <= to) : salesData;
       }
 
-      // Подсчет метрик
       let total = 0;
-      let min = filtered.length ? filtered[0].amount : 0;
+      let min = filtered.length ? Number(filtered[0].amount) : 0;
 
       filtered.forEach(s => {
-        const amt = Number(s.amount);
+        const amt = Number(s.amount) || 0;
         total += amt;
         if (amt < min) min = amt;
       });
@@ -526,7 +472,6 @@
     }
 
     function renderCharts(data) {
-      // 1. Агрегация по датам для линейного графика
       const dateMap = {};
       data.forEach(s => {
         dateMap[s.date] = (dateMap[s.date] || 0) + Number(s.amount);
@@ -534,41 +479,39 @@
       const dates = Object.keys(dateMap).sort();
       const amounts = dates.map(d => dateMap[d]);
 
-      if (salesChartInstance) salesChartInstance.destroy();
+      if (chartSales) chartSales.destroy();
       const ctxSales = document.getElementById('salesChart').getContext('2d');
-      salesChartInstance = new Chart(ctxSales, {
+      chartSales = new Chart(ctxSales, {
         type: 'line',
         data: {
           labels: dates,
           datasets: [{
-            label: 'Выручка (TJS)',
             data: amounts,
             borderColor: '#38bdf8',
-            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+            backgroundColor: 'rgba(56, 189, 248, 0.15)',
             fill: true,
-            tension: 0.3
+            tension: 0.2
           }]
         },
         options: {
           responsive: true,
           plugins: { legend: { display: false } },
           scales: {
-            x: { ticks: { color: '#94a3b8', font: { size: 10 } } },
+            x: { ticks: { color: '#94a3b8' } },
             y: { ticks: { color: '#94a3b8' } }
           }
         }
       });
 
-      // 2. Агрегация по продавцам для круговой диаграммы
       const sellerMap = {};
       data.forEach(s => {
-        const name = s.seller || "Другой";
+        const name = s.seller || "Сотрудник";
         sellerMap[name] = (sellerMap[name] || 0) + Number(s.amount);
       });
 
-      if (sellersChartInstance) sellersChartInstance.destroy();
+      if (chartSellers) chartSellers.destroy();
       const ctxSellers = document.getElementById('sellersChart').getContext('2d');
-      sellersChartInstance = new Chart(ctxSellers, {
+      chartSellers = new Chart(ctxSellers, {
         type: 'doughnut',
         data: {
           labels: Object.keys(sellerMap),
@@ -579,12 +522,11 @@
         },
         options: {
           responsive: true,
-          plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc', font: { size: 11 } } } }
+          plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc' } } }
         }
       });
     }
 
-    // Управление пользователями
     async function loadUsers() {
       try {
         const res = await fetch(`${SCRIPT_URL}?action=getUsers&userId=${currentUserId}`);
@@ -600,7 +542,7 @@
                 <div class="name">${u.name}</div>
                 <div class="time">ID: ${u.id}</div>
               </div>
-              <span class="badge-role">${u.role}</span>
+              <span class="badge">${u.role}</span>
             `;
             list.appendChild(div);
           });
@@ -609,15 +551,12 @@
     }
 
     async function addUser() {
-      const idInput = document.getElementById('newUserId');
-      const nameInput = document.getElementById('newUserName');
-      const roleInput = document.getElementById('newUserRole');
+      const id = document.getElementById('targetId').value.trim();
+      const name = document.getElementById('targetName').value.trim();
+      const role = document.getElementById('targetRole').value;
       const msg = document.getElementById('userStatusMsg');
 
-      const targetId = idInput.value.trim();
-      const targetName = nameInput.value.trim();
-
-      if (!targetId || !targetName) {
+      if (!id || !name) {
         alert('Заполните ID и Имя');
         return;
       }
@@ -626,21 +565,22 @@
       try {
         await fetch(SCRIPT_URL, {
           method: 'POST',
+          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             action: 'addUser',
             userId: currentUserId,
-            targetId: targetId,
-            targetName: targetName,
-            targetRole: roleInput.value
+            targetId: id,
+            targetName: name,
+            targetRole: role
           })
         });
-        msg.innerText = '✓ Пользователь добавлен!';
-        idInput.value = '';
-        nameInput.value = '';
-        loadUsers();
+        msg.innerText = '✓ Доступ предоставлен!';
+        document.getElementById('targetId').value = '';
+        document.getElementById('targetName').value = '';
+        setTimeout(() => { msg.innerText = ''; }, 3000);
       } catch (e) {
-        msg.innerText = 'Ошибка добавления';
+        msg.innerText = 'Ошибка запроса';
       }
     }
 
